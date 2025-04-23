@@ -73,13 +73,10 @@ nav a:hover{
     text-decoration: underline;
     text-align: center;
 }
-
-#vizContainer {
-    width: 100%;
-    height: 80vh; 
-  }
   
-  
+.tableauPlaceholder{
+    margin: 0 auto;
+}
 
 .back-to-top{
     display: block;
