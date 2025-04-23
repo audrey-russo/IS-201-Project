@@ -1,0 +1,87 @@
+
+body{
+    text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: rgb(210, 225, 240);
+}
+
+.common{
+    text-align: center;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.header{
+    height: 35px;
+    background-color: rgb(138, 173, 183);
+    color: rgb(0, 0, 93);
+    line-height: 35px;
+}
+
+.mainbody{
+    background-color: rgb(210, 225, 240);
+}
+
+.footer{
+    background-color: aliceblue;
+    color: blue;
+    bottom: 0px;
+    left: 1px;
+    right: 1px;
+    height: 25px;
+    padding-top: 15px;
+}
+
+
+.centered-list{
+    text-align: center;
+    padding-left: 0;
+    list-style-position: inside;
+}
+
+ol > li {
+    font-weight: bold;
+    text-decoration: underline;
+  }
+  
+
+img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 25%;
+}
+
+nav{
+    background-color: rgb(170, 199, 236);
+    padding: 10px;
+    overflow: hidden;
+}
+
+nav a{
+    font-size: 16px;
+    font-weight: bold;
+    color: rgb(22, 24, 170);
+    text-decoration: none;
+    padding: 20px;
+}
+
+nav a:hover{
+    background-color:#ccc
+}
+
+#top{
+    text-decoration: underline;
+    text-align: center;
+}
+
+#vizContainer {
+    width: 100%;
+    height: 80vh; 
+  }
+  
+  
+
+.back-to-top{
+    display: block;
+    text-align: center;
+}

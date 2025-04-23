@@ -1,0 +1,214 @@
+
+
+<!--should put it on GitHub, use 24.5 Put it Online-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Snake Game</title>
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      color: #fff;
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    canvas {
+      border: 2px solid #fff;
+      background-color: #222;
+      display: none;
+    }
+
+    #score {
+      margin-top: 10px;
+      font-size: 1.2em;
+    }
+
+    .controls {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    select, button {
+      font-size: 1em;
+      padding: 6px 12px;
+      margin: 5px;
+      border-radius: 5px;
+      border: none;
+      outline: none;
+      cursor: pointer;
+    }
+
+    a {
+      margin-top: 20px;
+      color: #4af;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>🐍 Snake Game</h1>
+
+  <div class="controls">
+    <label for="difficulty">Difficulty: </label>
+    <select id="difficulty">
+      <option value="150">Easy</option>
+      <option value="100" selected>Medium</option>
+      <option value="60">Hard</option>
+    </select>
+    <button onclick="startGame()">Start</button>
+    <button onclick="pauseGame()">Pause</button>
+    <button onclick="resumeGame()">Resume</button>
+  </div>
+
+  <canvas id="gameCanvas" width="400" height="400"></canvas>
+  <div id="score">Score: 0</div>
+  <a href="index.html">← Back to Scratch Page</a>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const box = 20;
+    const rows = canvas.height / box;
+    const cols = canvas.width / box;
+
+    let snake, direction, food, score, game, isPaused = false;
+    let speed, baseSpeed, minSpeed = 30;
+
+    function resetGame() {
+      snake = [{ x: 10 * box, y: 10 * box }];
+      direction = "RIGHT";
+      food = {
+        x: Math.floor(Math.random() * cols) * box,
+        y: Math.floor(Math.random() * rows) * box,
+      };
+      score = 0;
+      isPaused = false;
+      baseSpeed = parseInt(document.getElementById("difficulty").value);
+      speed = baseSpeed;
+      document.getElementById("score").textContent = "Score: 0";
+    }
+
+    function startGame() {
+      resetGame();
+      clearInterval(game);
+      canvas.style.display = "block";
+      game = setInterval(draw, speed);
+    }
+
+    function pauseGame() {
+      if (!isPaused) {
+        clearInterval(game);
+        isPaused = true;
+      }
+    }
+
+    function resumeGame() {
+      if (isPaused) {
+        isPaused = false;
+        game = setInterval(draw, speed);
+      }
+    }
+
+    document.addEventListener("keydown", changeDirection);
+
+    function changeDirection(e) {
+      if (e.key === "ArrowUp" && direction !== "DOWN") direction = "UP";
+      else if (e.key === "ArrowDown" && direction !== "UP") direction = "DOWN";
+      else if (e.key === "ArrowLeft" && direction !== "RIGHT") direction = "LEFT";
+      else if (e.key === "ArrowRight" && direction !== "LEFT") direction = "RIGHT";
+    }
+
+    function drawFlower(x, y, r) {
+      const petalCount = 5;
+      const angle = (2 * Math.PI) / petalCount;
+      ctx.fillStyle = "pink";
+      for (let i = 0; i < petalCount; i++) {
+        const petalX = x + Math.cos(i * angle) * r;
+        const petalY = y + Math.sin(i * angle) * r;
+        ctx.beginPath();
+        ctx.arc(petalX, petalY, r / 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.beginPath();
+      ctx.fillStyle = "yellow";
+      ctx.arc(x, y, r / 2.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw snake
+      for (let i = 0; i < snake.length; i++) {
+        ctx.fillStyle = i % 2 === 0 ? "#006400" : "#32CD32";
+        ctx.fillRect(snake[i].x, snake[i].y, box, box);
+      }
+
+      // Draw food as flower
+      drawFlower(food.x + box / 2, food.y + box / 2, box / 2.5);
+
+      // Move snake
+      let head = { ...snake[0] };
+      if (direction === "LEFT") head.x -= box;
+      if (direction === "RIGHT") head.x += box;
+      if (direction === "UP") head.y -= box;
+      if (direction === "DOWN") head.y += box;
+
+      // Wrap edges
+      if (head.x < 0) head.x = canvas.width - box;
+      if (head.x >= canvas.width) head.x = 0;
+      if (head.y < 0) head.y = canvas.height - box;
+      if (head.y >= canvas.height) head.y = 0;
+
+      // Game over if snake eats itself
+      if (snake.some(seg => seg.x === head.x && seg.y === head.y)) {
+        clearInterval(game);
+        alert("Game Over! Final score: " + score);
+        canvas.style.display = "none";
+        return;
+      }
+
+      // Eat food
+      if (head.x === food.x && head.y === food.y) {
+        score++;
+        document.getElementById("score").textContent = "Score: " + score;
+        food = {
+          x: Math.floor(Math.random() * cols) * box,
+          y: Math.floor(Math.random() * rows) * box,
+        };
+
+        // Speed up every 5 points
+        if (score % 5 === 0 && speed > minSpeed) {
+          speed -= 10;
+          clearInterval(game);
+          game = setInterval(draw, speed);
+        }
+      } else {
+        snake.pop();
+      }
+
+      snake.unshift(head);
+    }
+  </script>
+</body>
+</html>
